@@ -5,136 +5,281 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AMAROSE GPT</title>
     <style>
-        :root {
-            --primary-color: #0A1F44;
-            --accent-color: #00BFFF;
-            --bg-color: #F4F7FA;
-            --white: #FFFFFF;
-            --text-color: #333333;
-        }
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #222;
             display: flex;
             flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
+
+        /* Шапка сайта */
         header {
-            background-color: var(--white);
-            padding: 15px 20px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #E1E8ED;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            padding: 12px 16px;
+            border-bottom: 1px solid #eaeaea;
+            background: #fff;
+            z-index: 10;
         }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+
+        .header-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            color: #333;
         }
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111;
         }
-        .logo-text {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary-color);
-            letter-spacing: 0.5px;
-        }
+
+        /* Основная область чата */
         .chat-container {
             flex: 1;
-            padding: 20px;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            justify-content: space-between;
+            position: relative;
             max-width: 800px;
             width: 100%;
             margin: 0 auto;
         }
-        .message {
-            padding: 12px 16px;
-            border-radius: 12px;
-            max-width: 75%;
-            line-height: 1.5;
-            font-size: 15px;
-        }
-        .message.ai {
-            background-color: var(--white);
-            color: var(--primary-color);
-            align-self: flex-start;
-            border: 1px solid #E1E8ED;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .message.user {
-            background-color: var(--primary-color);
-            color: var(--white);
-            align-self: flex-end;
-        }
-        .input-area {
-            background-color: var(--white);
-            padding: 15px 20px;
+
+        .welcome-screen {
             display: flex;
-            gap: 10px;
-            border-top: 1px solid #E1E8ED;
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto box-sizing: border-box;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            text-align: center;
+            padding: 20px;
         }
-        input[type="text"] {
+
+        .logo-box {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #007aff, #00c6ff);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+        }
+
+        .welcome-text {
+            font-size: 18px;
+            color: #444;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        /* Поле ввода сообщения */
+        .input-area {
+            padding: 16px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .input-box {
             flex: 1;
             padding: 12px 16px;
-            border: 1px solid #CCD6DD;
-            border-radius: 8px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
             outline: none;
             font-size: 15px;
+            background: #f9f9f9;
+            transition: border-color 0.2s;
         }
-        input[type="text"]:focus {
-            border-color: var(--accent-color);
+
+        .input-box:focus {
+            border-color: #007aff;
+            background: #fff;
         }
-        button {
-            background-color: var(--primary-color);
-            color: var(--white);
+
+        .send-btn {
+            background-color: #0f172a;
+            color: white;
             border: none;
-            padding: 0 20px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
         }
-        button:hover {
-            background-color: var(--accent-color);
+
+        .send-btn:hover {
+            background-color: #007aff;
+        }
+
+        /* Боковое меню (Drawer) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: #f8f9fa;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #111;
+        }
+
+        .close-menu {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .sidebar-item:hover {
+            background: #eaeaea;
+        }
+
+        /* Затемнение фона при открытии меню */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 99;
+        }
+
+        .overlay.active {
+            display: block;
         }
     </style>
 </head>
 <body>
+
+    <!-- Шапка -->
     <header>
-        <div class="logo-container">
-            <div class="logo-icon">A</div>
-            <div class="logo-text">AMAROSE GPT</div>
-        </div>
+        <button class="header-btn" onclick="toggleMenu()">☰</button>
+        <div class="header-title">AMAROSE GPT</div>
+        <button class="header-btn" onclick="newChat()">+</button>
     </header>
 
-    <div class="chat-container">
-        <div class="message ai">
-            Здравствуйте! Я ваш персональный помощник <strong>AMAROSE GPT</strong>. Чем я могу помочь вам сегодня?
+    <!-- Затемнение фона -->
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <!-- Боковое меню -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>AMAROSE GPT</span>
+            <button class="close-menu" onclick="toggleMenu()">✕</button>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-item" onclick="alert('Библиотека')">📚 Библиотека</div>
+            <div class="sidebar-item" onclick="alert('Проекты')">📁 Проекты</div>
+            <div class="sidebar-item" onclick="alert('Плагины')">🧩 Плагины</div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Закрепленное</h3>
+            <div class="sidebar-item">📌 AMAROSE Project</div>
+            <div class="sidebar-item">📌 Настройка эквайринга</div>
+        </div>
+
+        <div class="sidebar-section" style="flex: 1; overflow-y: auto;">
+            <h3>Недавнее</h3>
+            <div class="sidebar-item">💬 Создание интерфейса</div>
+            <div class="sidebar-item">💬 Подключение базы данных</div>
         </div>
     </div>
 
-    <div class="input-area">
-        <input type="text" placeholder="Введите ваш запрос...">
-        <button>Отправить</button>
+    <!-- Основной контент (Чат) -->
+    <div class="chat-container">
+        <div class="welcome-screen">
+            <div class="logo-box">A</div>
+            <div class="welcome-text">Здравствуйте! Я ваш персональный помощник <b>AMAROSE GPT</b>. Чем я могу помочь вам сегодня?</div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" class="input-box" placeholder="Введите ваш запрос...">
+            <button class="send-btn">Отправить</button>
+        </div>
     </div>
+
+    <script>
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        function newChat() {
+            alert('Открыт новый диалог!');
+        }
+    </script>
+
 </body>
 </html>
